@@ -11,8 +11,6 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.web.PageableDefault;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -77,6 +75,12 @@ public class UserController {
     @Operation(summary = "토큰 재발급")
     public ApiResponse<MemberLoginResponseDto> reissue(@RequestBody @Valid TokenReissueRequestDto  dto) {
         return ApiResponse.success(authService.reissue(dto));
+    }
+
+    @PostMapping("/refresh-token/renew")
+    @Operation(summary = "refreshToken 갱신")
+    public ApiResponse<?> renewRefreshToken(@AuthenticationPrincipal CustomUserDetails userDetails) {
+        return ApiResponse.success(authService.renewRefreshToken(userDetails.getAccountId()));
     }
 
     @PostMapping("/logout")

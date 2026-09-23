@@ -75,4 +75,13 @@ public class JwtTokenProvider {
             return false;
         }
     }
+
+    public String getCategory(String token) {
+        return Jwts.parser()
+                .verifyWith(key)
+                .build()
+                .parseSignedClaims(token)
+                .getPayload()
+                .get("category", String.class);
+    }
 }
