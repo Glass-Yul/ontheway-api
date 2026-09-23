@@ -27,6 +27,11 @@ public class CaffeineRefreshTokenStore implements RefreshTokenStore {
     }
 
     @Override
+    public void saveOnLogin(String accountId, String refreshToken) {
+        refreshTokenCache.put(accountId, new TokenRecord(refreshToken, null, System.currentTimeMillis()));
+    }
+
+    @Override
     public TokenValidationResult validate(String accountId, String refreshToken) {
         TokenRecord record = refreshTokenCache.getIfPresent(accountId);
 
