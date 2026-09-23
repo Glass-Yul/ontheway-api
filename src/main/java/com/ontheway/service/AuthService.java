@@ -2,6 +2,7 @@ package com.ontheway.service;
 
 import com.ontheway.dto.request.TokenReissueRequestDto;
 import com.ontheway.dto.response.MemberLoginResponseDto;
+import com.ontheway.dto.response.TokenRenewResponseDto;
 import com.ontheway.global.exception.BusinessException;
 import com.ontheway.global.exception.ErrorCode;
 import com.ontheway.global.security.jwt.JwtTokenProvider;
@@ -27,6 +28,10 @@ public class AuthService {
             throw new BusinessException(ErrorCode.INVALID_TOKEN);
         }
 
+        if (!"refresh".equals(jwtTokenProvider.getCategory(refreshToken))) {
+            throw new BusinessException(ErrorCode.INVALID_TOKEN);
+        }
+
         String accountId = jwtTokenProvider.getAccountId(refreshToken);
 
         if (!refreshTokenStore.matches(accountId, refreshToken)) {
@@ -47,6 +52,16 @@ public class AuthService {
 
     public void logout(String accountId) {
         refreshTokenStore.delete(accountId);
+    }
+
+    public TokenRenewResponseDto renewRefreshToken(String accountId) {
+        String newRefreshToken = jwtTokenProvider.createRefreshToken(accountId);
+        refreshTokenStore.save(accountId, newRefreshToken);
+
+        return TokenRenewResponseDto.builder()
+                .refreshToken(newRefreshToken)
+                .createdAt(LocalDateTime.now())
+                .build();
     }
 
 }

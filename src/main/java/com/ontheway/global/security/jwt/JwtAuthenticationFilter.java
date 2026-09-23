@@ -35,7 +35,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter { //jwt 검사
         String token = resolveToken(request);
 
         if (token != null) {
-            if (jwtTokenProvider.validateToken(token)) {
+            if (jwtTokenProvider.validateToken(token) && "access".equals(jwtTokenProvider.getCategory(token))) {
                 String accountId = jwtTokenProvider.getAccountId(token);
 
                 try {
